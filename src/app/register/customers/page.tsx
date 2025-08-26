@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { SimpleContextMenu } from '@/components/ui/context-menu'
 import { useOrganization, useUser } from '@clerk/nextjs'
 import type { Customer, CustomersListResponse } from '@/models/customer'
 
@@ -90,6 +91,22 @@ export default function CustomersPage() {
       alert(e.message || 'Failed to save')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDelete = async (c: Customer) => {
+    if (!orgId) return
+    const confirmDelete = window.confirm(`Delete customer "${c.name}"?`)
+    if (!confirmDelete) return
+    try {
+      const res = await fetch(`/api/customers/${c.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error((await res.json()).error || 'Delete failed')
+      // Refresh list
+      const list = await fetch('/api/customers', { cache: 'no-store' })
+      const data = (await list.json()) as CustomersListResponse
+      setCustomers(data.customers)
+    } catch (e: any) {
+      alert(e.message || 'Failed to delete')
     }
   }
 
@@ -179,14 +196,22 @@ export default function CustomersPage() {
                 </TableRow>
               )}
               {!loading && customers.map((c) => (
-                <TableRow key={c.id}>
-                  <TableCell className="font-medium">{c.name}</TableCell>
-                  <TableCell>{c.email || '-'}</TableCell>
-                  <TableCell>{c.phone || '-'}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm" onClick={() => startEdit(c)}>Edit</Button>
-                  </TableCell>
-                </TableRow>
+                <SimpleContextMenu
+                  key={c.id}
+                  items={[
+                    { label: 'Edit', onSelect: () => startEdit(c) },
+                    { label: 'Delete', onSelect: () => handleDelete(c), className: 'text-red-600' },
+                  ]}
+                >
+                  <TableRow onDoubleClick={() => startEdit(c)} className="cursor-default">
+                    <TableCell className="font-medium">{c.name}</TableCell>
+                    <TableCell>{c.email || '-'}</TableCell>
+                    <TableCell>{c.phone || '-'}</TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm" onClick={() => startEdit(c)}>Edit</Button>
+                    </TableCell>
+                  </TableRow>
+                </SimpleContextMenu>
               ))}
             </TableBody>
           </Table>
