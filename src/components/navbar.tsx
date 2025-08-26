@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Folder, Users, Settings, CreditCard } from "lucide-react";
+import { LayoutDashboard, Folder, Users, Settings, CreditCard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { OrganizationSwitcher, SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
@@ -128,6 +128,33 @@ export function Navbar() {
                                                     </SidebarMenuButton>
                                                 </SidebarMenuItem>
                                             </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+
+                    {/* Register section */}
+                    <SidebarGroup>
+                        <SidebarGroupLabel className={`${isExpanded ? "opacity-100" : "opacity-0"} transition-opacity`}>
+                            Register
+                        </SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu className="mt-2 px-2 group-data-[collapsible=icon]:px-0">
+                                <SidebarMenuItem>
+                                    <SidebarMenuButton
+                                        asChild
+                                        tooltip="Customers"
+                                        isActive={isActive("/register/customers")}
+                                        className="group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:p-0"
+                                    >
+                                        <Link
+                                            href="/register/customers"
+                                            className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:w-full"
+                                        >
+                                            <User className="h-5 w-5" />
+                                            <span>Customers</span>
+                                        </Link>
+                                    </SidebarMenuButton>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
                         </SidebarGroupContent>
                     </SidebarGroup>
                 </SidebarContent>
