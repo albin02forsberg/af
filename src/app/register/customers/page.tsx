@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 // Context menu is provided via TableRow.contextMenuItems
@@ -12,7 +12,7 @@ import { useOrganization, useUser } from '@clerk/nextjs'
 import type { Customer, CustomersListResponse } from '@/models/customer'
 
 export default function CustomersPage() {
-  const { isLoaded: userLoaded, user } = useUser()
+  const { isLoaded: userLoaded } = useUser()
   const { organization, isLoaded: orgLoaded } = useOrganization()
 
   const orgId = organization?.id
@@ -45,8 +45,9 @@ export default function CustomersPage() {
         if (!res.ok) throw new Error((await res.json()).error || `HTTP ${res.status}`)
   const data = (await res.json()) as CustomersListResponse
         setCustomers(data.customers)
-      } catch (e: any) {
-        setError(e.message || 'Failed to load customers')
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'Failed to load customers'
+        setError(msg)
       } finally {
         setLoading(false)
       }
@@ -87,8 +88,9 @@ export default function CustomersPage() {
   const data = (await list.json()) as CustomersListResponse
       setCustomers(data.customers)
       setOpen(false)
-    } catch (e: any) {
-      alert(e.message || 'Failed to save')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to save'
+      alert(msg)
     } finally {
       setSaving(false)
     }
@@ -105,8 +107,9 @@ export default function CustomersPage() {
       const list = await fetch('/api/customers', { cache: 'no-store' })
       const data = (await list.json()) as CustomersListResponse
       setCustomers(data.customers)
-    } catch (e: any) {
-      alert(e.message || 'Failed to delete')
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Failed to delete'
+      alert(msg)
     }
   }
 
@@ -169,13 +172,13 @@ export default function CustomersPage() {
         </Sheet>
       </div>
       <Separator />
-      {!ready && <p>Loading…</p>}
-      {ready && !orgId && (
-        <p className="text-muted-foreground">Please select an organization to manage customers.</p>
+      {error && (
+        <div role="alert" className="text-red-600">
+          {error}
+        </div>
       )}
-      {ready && orgId && (
         <div className="rounded border w-full max-w-none flex-1 min-h-0 overflow-auto">
-          <Table>
+          <Table loading={loading} skeletonRows={3}>
             <TableHeader>
               <TableRow>
                 <TableHead>Name</TableHead>
@@ -184,12 +187,7 @@ export default function CustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading && (
-                <TableRow>
-                  <TableCell colSpan={4}>Loading…</TableCell>
-                </TableRow>
-              )}
-              {!loading && customers.length === 0 && (
+              {customers.length === 0 && !loading && (
                 <TableRow>
                   <TableCell colSpan={4} className="text-muted-foreground">No customers yet.</TableCell>
                 </TableRow>
@@ -212,7 +210,7 @@ export default function CustomersPage() {
             </TableBody>
           </Table>
         </div>
-      )}
+    
     </div>
   )
 }

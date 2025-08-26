@@ -16,7 +16,7 @@ export async function GET() {
   const snap = await getDocs(q)
   const customers: Customer[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as CustomerDoc) }))
     return NextResponse.json({ customers } satisfies CustomersListResponse)
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('GET /api/customers error', err)
     return NextResponse.json({ error: 'Failed to load customers' } satisfies ApiError, { status: 500 })
   }
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       } as Customer,
       { status: 201 }
     )
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('POST /api/customers error', err)
     return NextResponse.json({ error: 'Failed to create customer' } satisfies ApiError, { status: 500 })
   }

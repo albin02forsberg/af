@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore'
+import { collection, getDocs, limit, query } from 'firebase/firestore'
 import { db } from '../../../lib/firebase'
 
 
