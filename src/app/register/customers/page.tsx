@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Sheet, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { SimpleContextMenu } from '@/components/ui/context-menu'
+// Context menu is provided via TableRow.contextMenuItems
 import { useOrganization, useUser } from '@clerk/nextjs'
 import type { Customer, CustomersListResponse } from '@/models/customer'
 
@@ -181,7 +181,6 @@ export default function CustomersPage() {
                 <TableHead>Name</TableHead>
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
-                <TableHead className="w-[1%]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -196,22 +195,19 @@ export default function CustomersPage() {
                 </TableRow>
               )}
               {!loading && customers.map((c) => (
-                <SimpleContextMenu
+                <TableRow
                   key={c.id}
-                  items={[
+                  onDoubleClick={() => startEdit(c)}
+                  className="cursor-default"
+                  contextMenuItems={[
                     { label: 'Edit', onSelect: () => startEdit(c) },
                     { label: 'Delete', onSelect: () => handleDelete(c), className: 'text-red-600' },
                   ]}
                 >
-                  <TableRow onDoubleClick={() => startEdit(c)} className="cursor-default">
-                    <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell>{c.email || '-'}</TableCell>
-                    <TableCell>{c.phone || '-'}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => startEdit(c)}>Edit</Button>
-                    </TableCell>
-                  </TableRow>
-                </SimpleContextMenu>
+                  <TableCell className="font-medium">{c.name}</TableCell>
+                  <TableCell>{c.email || '-'}</TableCell>
+                  <TableCell>{c.phone || '-'}</TableCell>
+                </TableRow>
               ))}
             </TableBody>
           </Table>
