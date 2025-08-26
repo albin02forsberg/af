@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/navbar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { Header } from '@/components/header'
+import { SignedIn, SignedOut } from '@clerk/nextjs'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,19 +29,32 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="h-full" suppressHydrationWarning>
+      <html
+        lang="en"
+        className={`h-full ${geistSans.variable} ${geistMono.variable}`}
+        suppressHydrationWarning
+      >
         <body className="h-full">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <SidebarProvider>
-              <div className="min-h-screen flex flex-col">
-                <div className="flex flex-1 min-h-0">
-                  <Navbar />
-                  <SidebarInset className="flex-1">
-                    <main className="flex-1 p-6">{children}</main>
-                  </SidebarInset>
+            {/* App shell for authenticated users */}
+            <SignedIn>
+              <SidebarProvider>
+                <div className="min-h-screen flex flex-col">
+                  <div className="flex flex-1 min-h-0">
+                    <Navbar />
+                    <SidebarInset className="flex-1">
+                      <main className="flex-1 p-6">{children}</main>
+                    </SidebarInset>
+                  </div>
                 </div>
+              </SidebarProvider>
+            </SignedIn>
+            {/* Minimal layout for signed-out users */}
+            <SignedOut>
+              <div className="min-h-screen flex flex-col">
+                <main className="flex-1">{children}</main>
               </div>
-            </SidebarProvider>
+            </SignedOut>
           </ThemeProvider>
         </body>
       </html>

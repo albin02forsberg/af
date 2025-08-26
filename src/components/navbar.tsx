@@ -28,7 +28,7 @@ export function Navbar() {
     const isExpanded = state === "expanded";
     const pathname = usePathname();
 
-    const isActive = (to: string) => pathname === to || pathname.startsWith(`${to}/`);
+    const isActive = (to: string) => pathname === to || pathname?.startsWith(`${to}/`);
 
     return (
         <TooltipProvider delayDuration={200}>
