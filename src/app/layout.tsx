@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { Navbar } from '@/components/navbar'
-import { SidebarProvider } from '@/components/ui/sidebar'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { SignedIn, SignedOut } from '@clerk/nextjs'
 import { Analytics } from "@vercel/analytics/next"
 
@@ -40,17 +40,14 @@ export default function RootLayout({
             <Analytics />
             {/* App shell for authenticated users */}
             <SignedIn>
-              <SidebarProvider>
-                <div className="min-h-screen flex flex-col">
-                  <div className="flex flex-1 min-h-0 min-w-0">
-                    <Navbar />
-                   
-                      <main className="flex flex-col w-full h-full flex-1 min-h-0 min-w-0 p-6 overflow-auto">
-                        {children}
-                      </main>
-            
+              <SidebarProvider className="min-h-screen">
+                {/* Sidebar lives inside Navbar and must be a sibling to the inset content */}
+                <Navbar />
+                <SidebarInset>
+                  <div className="flex flex-col w-full h-full flex-1 min-h-0 min-w-0 p-6 overflow-auto">
+                    {children}
                   </div>
-                </div>
+                </SidebarInset>
               </SidebarProvider>
             </SignedIn>
             {/* Minimal layout for signed-out users */}

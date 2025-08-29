@@ -1,15 +1,19 @@
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Dashboard from "@/components/dashboard/dashboard";
 
 export default async function Home() {
   const user = await currentUser();
   return (
     <div className="min-h-[calc(100vh-0px)] w-full">
       {user ? (
-        <main className="container mx-auto max-w-5xl px-6 py-12">
-          <h1 className="text-3xl font-semibold tracking-tight">Welcome back, {user.firstName}!</h1>
-          <p className="text-muted-foreground mt-2">You’re signed in. Use the sidebar to navigate.</p>
+        <main className="w-full h-full px-2 sm:px-6 py-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-semibold tracking-tight">Welcome back, {user.firstName}!</h1>
+            <p className="text-muted-foreground mt-1">Here’s what’s happening with your org.</p>
+          </div>
+          <Dashboard />
         </main>
       ) : (
         <main className="flex min-h-[calc(100vh-0px)] items-center justify-center px-6 py-16">
