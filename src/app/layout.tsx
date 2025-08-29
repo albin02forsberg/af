@@ -6,6 +6,7 @@ import './globals.css'
 import { Navbar } from '@/components/navbar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { SignedIn, SignedOut } from '@clerk/nextjs'
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,6 +37,7 @@ export default function RootLayout({
       >
         <body className="h-full">
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <Analytics />
             {/* App shell for authenticated users */}
             <SignedIn>
               <SidebarProvider>
